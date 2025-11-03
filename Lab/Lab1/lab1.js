@@ -69,3 +69,4 @@ function createBook(title, author, year, price) {
 const book = createBook("JavaScript ES6", "Manh Anh", 2025, 200000);
 console.log(book.getBookInfo());
 console.log(book.calculateDiscount(10));
+// 
