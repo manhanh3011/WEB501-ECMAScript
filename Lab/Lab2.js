@@ -121,9 +121,12 @@ const features = ["auth", "payment", "notification"];
 // - method: `get${env}Config()`
 
 const config = {
-   [env + version]: `api_${env}_${version}`,
+   [`api_${env}_${version}`]: `https://api/${env}/${version}`,
    [`feature_${features[0]}`]: true,
    [`feature_${features[1]}`]: true,
    [`feature_${features[2]}`]: true,
-
+   [`get${env}Config`] () {
+      return `Config for ${env}`;
+    },
 };
+console.log(config);
