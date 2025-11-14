@@ -65,3 +65,17 @@ function delay(ms) {
 }
 
 delay(2000).then(() => console.log("2 seconds passed"));
+
+
+// Bài 2: Viết hàm fetchMultipleData
+
+function fetchMultipleData(urls) {
+  return Promise.all(urls.map((url) => fetch(url).then((res) => res.json())));
+}
+
+fetchMultipleData(
+  ["https://www.vuonsenda.vn/products/sen-da-nau-5-7cm-bich-nhua",
+  "https://www.vuonsenda.vn/products/sen-da-banh-bao-lua-5-7cm-bich-nhua"])
+  .then((products) => console.log(products)
+);
+
