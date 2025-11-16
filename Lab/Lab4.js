@@ -74,8 +74,53 @@ function fetchMultipleData(urls) {
 }
 
 fetchMultipleData(
-  ["https://www.vuonsenda.vn/products/sen-da-nau-5-7cm-bich-nhua",
-  "https://www.vuonsenda.vn/products/sen-da-banh-bao-lua-5-7cm-bich-nhua"])
+  ["https://jsonplaceholder.typicode.com/users/1",
+  "https://jsonplaceholder.typicode.com/users/2"])
   .then((products) => console.log(products)
 );
 
+
+// Bài tập Async/Await
+// Bài 1: Viết lại callback hell thành async/await
+// Viết lại hàm này sử dụng async/await
+// function processOrder(orderId, callback) {
+//   getOrder(orderId, (order) => {
+//     getUser(order.userId, (user) => {
+//       getProducts(order.productIds, (products) => {
+//         callback({ order, user, products });
+//       });
+//     });
+//   });
+// }
+const processOrder = async (orderId, callback) => {
+  const order = await new Promise((resolve) => getOrder(orderId, resolve));
+  const user = await new Promise((resolve) => getUser(order.userId, resolve));
+  const products = await new Promise((resolve) => getProducts(order.productIds, resolve));
+
+  callback({ order, user, products });
+};
+
+processOrder(1, (data) => {
+  console.log("Kết quả:", data);
+});
+
+
+
+// Bài 2: Xử lý lỗi với async/await
+
+const safeApiCall = async (apiFunction, ...args) => {
+  try {
+    const result = await apiFunction(...args);
+    return { success: true, data: result };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+const fakeApi = (num) =>
+  new Promise((resolve, reject) =>
+    num > 5 ? resolve("OK") : reject(new Error("Number too small"))
+  );
+
+safeApiCall(fakeApi, 10).then(console.log);
+safeApiCall(fakeApi, 2).then(console.log);
