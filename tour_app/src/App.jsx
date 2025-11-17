@@ -1,6 +1,8 @@
 
 import './App.css'
+import Button from './component/Button';
 import Header from './component/header';
+import TourCard from './component/TourCard';
 
 function App() {
   const tours = [
@@ -59,14 +61,10 @@ function App() {
         <p>Chúng tôi mang đến cho bạn các tour du lịch trong nước đa dạng, chất lượng và phù hợp cho mọi nhu cầu khám phá.</p>
       </div>
       <div className="flex gap-2 my-4">
-        {tours.map(tours => {
-          return (
-            <div key={tours.id}>
-              <img src={tours.image} alt={tours.name} width={350}  />
-              <h3 className=''>{tours.name}</h3>
-            </div>
-          )
-        })}
+        {tours.map(tours => (
+          <TourCard key={tours.id} name={tours.name} image={tours.image} button />
+          
+        ))}
       </div>
     </div>
   )
