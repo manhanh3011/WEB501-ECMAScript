@@ -3,7 +3,7 @@ import Button from "./Button";
 function TourCard( tour ) {
   return (
     <div className="w-300px bg-white rounded-xl shadow-md hover:shadow-lg ">
-      <img src={tour.image} alt={tour.name} className="w-full h-[160px]"/>
+      <img src={tour.image} alt={tour.name} className="w-full h-[160px] rounded-t-xl"/>
 
       <div className="p-4">
         <h3 className="font-semibold text-lg min-h-[50px]">{tour.name}</h3>

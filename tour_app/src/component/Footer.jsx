@@ -67,7 +67,7 @@ function Footer() {
                 <i className="fa-brands fa-youtube text-4xl pr-5 text-red-600" ></i>
                 <i className="fa-brands fa-tiktok text-4xl pr-3 pl-2 bg-black rounded-full" ></i>
                 <i className="fa-brands fa-instagram text-4xl pl-3 text-amber-300"></i>
-                <img className="w-50 mt-5" src="https://dangkywebvoibocongthuong.com/wp-content/uploads/2021/11/logo-da-thong-bao-bo-cong-thuong.png" alt="logo-đã thông báo" />
+                <img className="w-40 mt-5" src="https://dangkywebvoibocongthuong.com/wp-content/uploads/2021/11/logo-da-thong-bao-bo-cong-thuong.png" alt="logo-đã thông báo" />
             </div>
         </div>
 
