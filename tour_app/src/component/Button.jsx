@@ -1,6 +1,8 @@
-function Button({label = "Button"}){
+function Button({label = "Button", className = ""}){
     return (
-        <button type="submit">{label} </button>
+        <button className={`px-4 py-2 rounded-md font-medium ${className}`} type="button" >
+            {label} 
+        </button>
     )
 };
 
