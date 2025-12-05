@@ -1,11 +1,24 @@
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import TourManagement from './admin/TourManagement';
 import TourAdd from './admin/TourAdd';
 import TourEdit from './admin/TourEdit';
 
 function AdminDashboard() {
-    const { user, logout } = useAuth();
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || 'null'));
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!user) {
+            navigate('/login');
+        }
+    }, [user, navigate]);
+
+    const logout = () => {
+        localStorage.removeItem('user');
+        setUser(null);
+        navigate('/');
+    };
     const location = useLocation();
 
     return (

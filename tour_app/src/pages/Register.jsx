@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
-function Login() {
+function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
     const navigate = useNavigate();
 
     const validateData = () => {
@@ -37,27 +36,38 @@ function Login() {
         }
 
         try {
+            // Kiểm tra email đã tồn tại chưa
             const response = await axios.get('http://localhost:3000/users');
             const users = response.data;
-            const foundUser = users.find(u => u.email === email && u.password === password);
+            const existingUser = users.find(u => u.email === email);
 
-            if (foundUser) {
-                localStorage.setItem('user', JSON.stringify(foundUser));
-                toast.success('Đăng nhập thành công');
-                navigate('/admin');
-            } else {
-                toast.error('Sai email hoặc mật khẩu');
+            if (existingUser) {
+                toast.error('Email đã được sử dụng');
+                return;
             }
-        } catch (error) {
-            toast.error('Lỗi kết nối server');
+
+            // Tạo user mới
+            const newUser = {
+                id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+                name: email.split('@')[0],
+                email: email.trim(),
+                password: password,
+                role: 'user'
+            };
+
+            await axios.post('http://localhost:3000/users', newUser);
+            toast.success('Đăng ký thành công!');
+            navigate('/login');
+        } catch {
+            toast.error('Lỗi đăng ký tài khoản');
         }
     };
 
     return (
-        <div className="flex items-center justify-center bg-gray-100 p-4">
+        <div className="flex items-center justify-center bg-gray-100 p-4 min-h-screen">
             <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
                 <h2 className="text-2xl font-bold text-center mb-6">
-                    Đăng nhập Admin
+                    Đăng ký tài khoản
                 </h2>
 
                 <form onSubmit={handleSubmit}>
@@ -85,14 +95,21 @@ function Login() {
 
                     <button
                         type="submit"
-                        className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 disabled:bg-gray-400"
+                        className="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 disabled:bg-gray-400 mb-4"
                     >
-                       Đăng nhập
+                        Đăng ký
                     </button>
+
+                    <div className="text-center">
+                        <span className="text-gray-600">Đã có tài khoản? </span>
+                        <Link to="/login" className="text-blue-500 hover:text-blue-700">
+                            Đăng nhập
+                        </Link>
+                    </div>
                 </form>
             </div>
         </div>
     );
 }
 
-export default Login;
+export default Register;

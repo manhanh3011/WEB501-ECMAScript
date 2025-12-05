@@ -1,25 +1,21 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { AuthProvider, useAuth } from "./context/AuthContext";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import AdminDashboard from "./pages/AdminDashboard";
 
 // Component để bảo vệ routes admin
 const ProtectedAdminRoute = ({ children }) => {
-    const { isAuthenticated, isAdmin, loading } = useAuth();
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
 
-    if (loading) {
-        return <div className="flex justify-center items-center h-screen">Đang tải...</div>;
-    }
-
-    if (!isAuthenticated()) {
+    if (!user) {
         return <Navigate to="/login" replace />;
     }
 
-    if (!isAdmin()) {
+    if (user.role !== 'admin') {
         return <Navigate to="/" replace />;
     }
 
@@ -29,27 +25,26 @@ const ProtectedAdminRoute = ({ children }) => {
 // Component chính của app
 function App() {
     return (
-        <AuthProvider>
-            <BrowserRouter>
-                <Routes>
-                    {/* Routes công khai */}
-                    <Route path="/" element={<Home />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/login" element={<Login />} />
+        <BrowserRouter>
+            <Routes>
+                {/* Routes công khai */}
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
-                    {/* Routes admin được bảo vệ */}
-                    <Route
-                        path="/admin/*"
-                        element={
-                            <ProtectedAdminRoute>
-                                <AdminDashboard />
-                            </ProtectedAdminRoute>
-                        }
-                    />
-                </Routes>
-                <ToastContainer position="top-right" autoClose={3000} />
-            </BrowserRouter>
-        </AuthProvider>
+                {/* Routes admin được bảo vệ */}
+                <Route
+                    path="/admin/*"
+                    element={
+                        <ProtectedAdminRoute>
+                            <AdminDashboard />
+                        </ProtectedAdminRoute>
+                    }
+                />
+            </Routes>
+            <ToastContainer position="top-right" autoClose={3000} />
+        </BrowserRouter>
     );
 }
 

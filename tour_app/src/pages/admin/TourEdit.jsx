@@ -6,9 +6,6 @@ import { toast } from 'react-toastify';
 function TourEdit() {
     const navigate = useNavigate();
     const { id } = useParams();
-    const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
-    const [errors, setErrors] = useState({});
 
     const [formData, setFormData] = useState({
         name: '',
@@ -32,74 +29,50 @@ function TourEdit() {
         } catch (error) {
             toast.error('Lỗi khi tải tour');
             navigate('/admin/tours');
-        } finally {
-            setLoading(false);
-        }
+        } 
     };
 
     useEffect(() => {
         fetchTour();
     }, [id]);
 
-    // Hàm validate form
-    const validateForm = () => {
-        const newErrors = {};
+    const validateData = () => {
+        let message = '';
 
-        if (!formData.name.trim() || formData.name.length < 5 || formData.name.length > 100) {
-            newErrors.name = 'Tên tour phải 5-100 ký tự';
+        if (!formData.name.trim() || !formData.description.trim() || !formData.price ||
+            !formData.image.trim() || !formData.duration.trim() || !formData.startLocation.trim() ||
+            !formData.departure.trim() || !formData.startDate || formData.slots === '') {
+            message = 'Cần nhập đầy đủ thông tin';
         }
 
-        if (!formData.description.trim() || formData.description.length < 10 || formData.description.length > 1000) {
-            newErrors.description = 'Mô tả phải 10-1000 ký tự';
+        if (formData.price && (isNaN(formData.price) || formData.price <= 0)) {
+            message = 'Giá tour phải lớn hơn 0';
         }
 
-        if (!formData.price || isNaN(formData.price) || formData.price <= 0) {
-            newErrors.price = 'Giá phải > 0';
+        if (formData.slots && (isNaN(formData.slots) || formData.slots < 0)) {
+            message = 'Số chỗ phải lớn hơn hoặc bằng 0';
         }
 
-        if (!formData.image.trim()) {
-            newErrors.image = 'URL hình ảnh bắt buộc';
-        } else {
-            try {
-                new URL(formData.image);
-            } catch {
-                newErrors.image = 'URL không hợp lệ';
-            }
+        if (formData.name && (formData.name.length < 5 || formData.name.length > 100)) {
+            message = 'Tên tour phải 5-100 ký tự';
         }
 
-        if (!formData.duration.trim()) {
-            newErrors.duration = 'Thời gian bắt buộc';
+        if (formData.description && (formData.description.length < 10 || formData.description.length > 1000)) {
+            message = 'Mô tả phải 10-1000 ký tự';
         }
 
-        if (!formData.startLocation.trim()) {
-            newErrors.startLocation = 'Điểm khởi hành bắt buộc';
-        }
-
-        if (!formData.departure.trim()) {
-            newErrors.departure = 'Nơi khởi hành bắt buộc';
-        }
-
-        if (!formData.startDate) {
-            newErrors.startDate = 'Ngày khởi hành bắt buộc';
-        }
-
-        if (formData.slots === '' || isNaN(formData.slots) || formData.slots < 0) {
-            newErrors.slots = 'Số chỗ phải >= 0';
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
+        return message;
     };
 
     // Hàm submit form
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!validateForm()) {
+        const message = validateData();
+        if (message) {
+            toast.error(message);
             return;
         }
-
-        setSaving(true);
 
         try {
             const tourData = {
@@ -113,8 +86,6 @@ function TourEdit() {
             navigate('/admin/tours');
         } catch (error) {
             toast.error('Lỗi khi cập nhật tour');
-        } finally {
-            setSaving(false);
         }
     };
 
@@ -126,10 +97,6 @@ function TourEdit() {
             [name]: type === 'checkbox' ? checked : value
         }));
     };
-
-    if (loading) {
-        return <div className="text-center py-8">Đang tải...</div>;
-    }
 
     return (
         <div className="max-w-4xl mx-auto">
@@ -159,7 +126,6 @@ function TourEdit() {
                             className="w-full p-2 border border-gray-300 rounded"
                             placeholder="Nhập tên tour"
                         />
-                        {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
                     </div>
 
                     {/* Price */}
@@ -176,7 +142,6 @@ function TourEdit() {
                             placeholder="Nhập giá tour"
                             min="0"
                         />
-                        {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
                     </div>
 
                     {/* Duration */}
@@ -192,7 +157,6 @@ function TourEdit() {
                             className="w-full p-2 border border-gray-300 rounded"
                             placeholder="Ví dụ: 3 ngày 2 đêm"
                         />
-                        {errors.duration && <p className="text-red-500 text-sm mt-1">{errors.duration}</p>}
                     </div>
 
                     {/* Start Location */}
@@ -208,7 +172,6 @@ function TourEdit() {
                             className="w-full p-2 border border-gray-300 rounded"
                             placeholder="Ví dụ: TP. Hồ Chí Minh"
                         />
-                        {errors.startLocation && <p className="text-red-500 text-sm mt-1">{errors.startLocation}</p>}
                     </div>
 
                     {/* Departure */}
@@ -224,7 +187,6 @@ function TourEdit() {
                             className="w-full p-2 border border-gray-300 rounded"
                             placeholder="Ví dụ: TP. Hồ Chí Minh"
                         />
-                        {errors.departure && <p className="text-red-500 text-sm mt-1">{errors.departure}</p>}
                     </div>
 
                     {/* Start Date */}
@@ -239,7 +201,6 @@ function TourEdit() {
                             onChange={handleChange}
                             className="w-full p-2 border border-gray-300 rounded"
                         />
-                        {errors.startDate && <p className="text-red-500 text-sm mt-1">{errors.startDate}</p>}
                     </div>
 
                     {/* Slots */}
@@ -256,7 +217,6 @@ function TourEdit() {
                             placeholder="Nhập số chỗ"
                             min="0"
                         />
-                        {errors.slots && <p className="text-red-500 text-sm mt-1">{errors.slots}</p>}
                     </div>
 
                     {/* Category */}
@@ -289,7 +249,6 @@ function TourEdit() {
                         className="w-full p-2 border border-gray-300 rounded"
                         placeholder="https://example.com/image.jpg"
                     />
-                    {errors.image && <p className="text-red-500 text-sm mt-1">{errors.image}</p>}
                 </div>
 
                 {/* Description */}
@@ -305,7 +264,6 @@ function TourEdit() {
                         className="w-full p-2 border border-gray-300 rounded"
                         placeholder="Nhập mô tả chi tiết về tour"
                     ></textarea>
-                    {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
                 </div>
 
                 {/* Active Checkbox */}
@@ -333,10 +291,9 @@ function TourEdit() {
                     </button>
                     <button
                         type="submit"
-                        disabled={saving}
                         className="bg-blue-500 text-white px-8 py-3 rounded hover:bg-blue-600 disabled:bg-gray-400 text-lg font-medium"
                     >
-                        {saving ? 'Đang lưu...' : 'Cập nhật Tour'}
+                    Cập nhật Tour
                     </button>
                 </div>
             </form>
